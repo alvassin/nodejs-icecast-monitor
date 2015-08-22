@@ -32,10 +32,10 @@ Following parameters are accepted:
 Parameter  | Type    | Required | Description
 -----------|---------|----------|------------
 `host`     | String  | Yes      | IP or DNS name
-`port`     | Integer | Yes      | Port number
+`port`     | Integer | No       | Port number (defaults to `80`)
 `user`     | String  | Yes      | Admin username
 `password` | String  | Yes      | Admin password
-`ssl`      | Boolean | No       | Use ssl or not (defaults to `true`)
+`ssl`      | Boolean | No       | Use ssl or not (defaults to `false`)
 
 # Methods
 #### monitor.createFeed
@@ -291,6 +291,7 @@ EVENT /test.mp3 audio_codecid 2
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Audio codec id: 2 for mp3, 10 for aac
 
 #### mount.audioInfo
@@ -301,6 +302,8 @@ EVENT /test.mp3 audio_info channels=2;samplerate=44100;bitrate=64
 
 Parameter         | Type    | Description
 ------------------|---------|------------
+`mount`           | String  | Mountpoint name
+`data`            | Object  | Audio channel info
 `data.channels`   | Integer | Number of channels
 `data.sampleRate` | Integer | Sample rate
 `data.bitrate`    | Integer | Bitrate (kbps)
@@ -312,6 +315,7 @@ EVENT /test.mp3 authenticator command
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Authenticator type
 
 #### mount.bitrate
@@ -321,6 +325,7 @@ EVENT /test.mp3 bitrate 64
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Bitrate (kbps), used for stats & YP
 
 #### mount.connected
@@ -330,6 +335,7 @@ EVENT /test.mp3 connected 180423
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Connection duration in seconds
 
 #### mount.delete
@@ -340,7 +346,7 @@ DELETE /test.mp3
 
 Parameter | Type   | Description
 ----------|--------|------------
-`data`    | String | Deleted mountpoint
+`mount`   | String | Deleted mountpoint name
 
 #### mount.flush
 ```
@@ -349,7 +355,7 @@ FLUSH /test.mp3
 
 Parameter | Type   | Description
 ----------|--------|------------
-`data`    | String | Flushed mountpoint
+`mount`   | String | Flushed mountpoint name
 
 #### mount.genre
 ```
@@ -358,6 +364,7 @@ EVENT /test.mp3 genre Misc
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Genre name, used for stats & YP
 
 #### mount.incomingBitrate
@@ -367,6 +374,7 @@ EVENT /test.mp3 incoming_bitrate 127064
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Source bitrate (bps)
 
 #### mount.listenerConnections
@@ -376,6 +384,7 @@ EVENT /test.mp3 listener_connections 4
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Connections number
 
 #### mount.listenerPeak
@@ -385,6 +394,7 @@ EVENT /test.mp3 listener_peak 2
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Max detected number of simultaneous listeners
 
 #### mount.listeners
@@ -394,6 +404,7 @@ EVENT /test.mp3 listeners 2
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Current listeners number
 
 #### mount.listenUrl
@@ -403,6 +414,7 @@ EVENT /11-31.mp3 listenurl http://icecast.dev:80/test.mp3
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Audio stream url
 
 #### mount.maxListeners
@@ -412,7 +424,8 @@ EVENT /11-31.mp3 max_listeners -1
 
 Parameter | Type    | Description
 ----------|---------|------------
-`data`    | Integer | Simultanios listeners limit 
+`mount`   | String  | Mountpoint name
+`data`    | Integer | Simultanious listeners limit 
 
 #### mount.metadataUpdated
 
@@ -423,6 +436,7 @@ EVENT /test.mp3 metadata_updated 06/Aug/2015:14:05:05 +0300
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Date when metadata was updated
 
 #### mount.mpegChannels
@@ -432,6 +446,7 @@ EVENT /test.mp3 mpeg_channels 2
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Number of audio channels
 
 #### mount.mpegSamplerate
@@ -441,6 +456,7 @@ EVENT /test.mp3 mpeg_samplerate 44100
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Sample rate
 
 #### mount.new
@@ -451,8 +467,8 @@ NEW audio/mpeg /229-682.mp3
 
 Parameter    | Type   | Description
 -------------|--------|------------
-`data.mime`  | String | Sample rate
-`data.mount` | String | Mountpoint
+`mount`      | String | Mountpoint
+`data`       | String | Mime type
 
 #### mount.outgoingKBitrate
 ```
@@ -461,6 +477,7 @@ EVENT /test.mp3 outgoing_kbitrate 0
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Outgoing bitrate (kbps)
 
 #### mount.public
@@ -471,6 +488,7 @@ EVENT /test.mp3 public 1
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Possible values: `-1` (up to source client / relay) , `0` (disable), `1` (force advertisement)
 
 #### mount.queueSize
@@ -480,6 +498,7 @@ EVENT /test.mp3 queue_size 65828
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Queue size
 
 #### mount.serverDescription
@@ -489,6 +508,7 @@ EVENT /test.mp3 server_description My station description
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | User-defined station description
 
 #### mount.serverName
@@ -498,6 +518,7 @@ EVENT /test.mp3 server_name TestFM
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | User-defined station name
 
 #### mount.serverType
@@ -507,6 +528,7 @@ EVENT /test.mp3 server_type audio/mpeg
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Mime type
 
 #### mount.serverUrl
@@ -516,6 +538,7 @@ EVENT /test.mp3 server_url http://example.com/
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | User-defined url
 
 #### mount.slowListeners
@@ -525,15 +548,17 @@ EVENT /test.mp3 slow_listeners 0
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Slow listeners number
 
 #### mount.sourceIp
 ```
-EVENT /test.mp3 source_ip master.icecast.dev
+EVENT /test.mp3 source_ip icecast.dev
 ```
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Mounpoint stream source host or ip address 
 
 #### mount.streamStart
@@ -543,6 +568,7 @@ EVENT /test.mp3 stream_start 04/Aug/2015:12:00:31 +0300
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Date, when mount started streaming
 
 #### mount.title
@@ -552,6 +578,7 @@ EVENT /test.mp3 title Werkdiscs - Helena Hauff - 'Sworn To Secrecy Part II'
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Track name
 
 #### mount.totalBytesRead
@@ -561,6 +588,7 @@ EVENT /test.mp3 total_bytes_read 1443575627
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Source (incoming) traffic in bytes
 
 #### mount.totalBytesSent
@@ -570,6 +598,7 @@ EVENT /test.mp3 total_bytes_sent 256000
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Source (outgoing) traffic in bytes
 
 #### mount.totalMBytesSent
@@ -579,6 +608,7 @@ EVENT /test.mp3 total_mbytes_sent 0
 
 Parameter | Type    | Description
 ----------|---------|------------
+`mount`   | String  | Mountpoint name
 `data`    | Integer | Source (outgoing) traffic in bytes
 
 #### mount.ypCurrentlyPlaying
@@ -588,6 +618,7 @@ EVENT /test.mp3 yp_currently_playing Nickelback - How You Remind Me
 
 Parameter | Type   | Description
 ----------|--------|------------
+`mount`   | String | Mountpoint name
 `data`    | String | Track, that is displayed in YP
 
 #### server.admin
