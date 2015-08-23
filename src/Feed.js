@@ -60,7 +60,7 @@ Feed.prototype.connect = function() {
   });
 
   feed.socket.on('data', function(data) {
-    var lines = data.toString().split("\n");
+    var lines = data.toString().split('\n');
     for (var i in lines) {
       if ( ! lines[i]) continue;
       feed.handleEvent(lines[i]);
@@ -87,17 +87,17 @@ Feed.prototype.handle = function(rawEvent) {
   }
 
   // Emit wilcard (*) event
-  this.emit.apply(['*', event.name].concat(params));
+  this.emit.apply(this, ['*', event.name].concat(params));
 
   // Emit server.* / mount.* events
   if (event.mount) {
-    this.emit.apply(['mount.*', event.name].concat(params));
+    this.emit.apply(this, ['mount.*', event.name].concat(params));
   } else {
-    this.emit.apply(['server.*', event.name].concat(params));
+    this.emit.apply(this, ['server.*', event.name].concat(params));
   }
 
   // Emit event
-  this.emit.apply([event.name].concat(params))
+  this.emit.apply(this, [event.name].concat(params))
 }
 
 /**
@@ -106,7 +106,7 @@ Feed.prototype.handle = function(rawEvent) {
  * @param {string} line
  * @return {object}
  */
-Feed.prototype.parseEvent = function(line) {
+Feed.prototype.parse = function(line) {
   
   var chunks = line.split(' ');
 
@@ -257,7 +257,6 @@ Feed.prototype.normalizeEventData = function(name, params) {
     case 'server.listenerConnections':
     case 'server.listeners':
     case 'server.outgoingKBitrate':
-    case 'server.serverId':
     case 'server.sourceClientConnections':
     case 'server.sourceRelayConnections':
     case 'server.sources':
@@ -287,6 +286,7 @@ Feed.prototype.normalizeEventData = function(name, params) {
     case 'server.host':
     case 'server.info':
     case 'server.location':
+    case 'server.serverId':
     case 'server.serverStart':
     default:
       result = params.join(' ');
