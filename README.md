@@ -8,7 +8,6 @@ Package provides handy interface for collecting [icecast-kh](https://karlheyes.g
   * [getSources](#monitorgetsources)
   * [getSource](#monitorgetsource)
   * [getListeners](#monitorgetlisteners)
-  * [createLogParser](#monitorcreatelogparser)
 * [Feed](#feed)
   * [Events](#events)
   * [Methods](#methods-1)
@@ -179,29 +178,6 @@ Parameter   | Type    | Description
 `lag`       | Integer | ?
 `connected` | Integer | Connected time in seconds
 
-#### monitor.createLogParser
-Creates [Monitor.LogParser](#logparser) instance, which starts to parse specified access.log file line by line, starting from given line.
-```js
-monitor.createLogParser('/var/log/icecast/access.log', 0, function(err, parser) {
-  if (err) throw err;
-  
-  parser.on('data', function(data, line) {
-    console.log('parsed line ' + line + ': ', data);
-  });
- 
-  parser.on('end', function() {
-    console.log('reached end of file');
-  });
-});
-```
-Following parameters are accepted:
-
-Parameter | Type     | Required | Description
-----------|----------|----------|------------
-file      | String   | Yes      | Access log path
-line      | Integer  | No       | Start line number
-callback  | Function | Yes      | User-defined callback function
-
 # Feed
 Establishes persistent connection with icecast using STATS HTTP method & processes events feed. Best way to create is to use [createFeed](#createfeed) method, which injects all necessary parameters.
 
@@ -241,7 +217,7 @@ Parameter | Type   | Description
   * [`mount.maxListeners`](#mountmaxlisteners)
   * [`mount.metadataUpdated`](#mountmetadataupdated)
   * [`mount.mpegChannels`](#mountmpegchannels)
-  * [`mount.mpegSamplerate`](#mountmpegsamplerate)
+  * [`mount.mpegSampleRate`](#mountmpegsamplerate)
   * [`mount.new`](#mountnew)
   * [`mount.outgoingKBitrate`](#mountoutgoingkbitrate)
   * [`mount.public`](#mountpublic)
@@ -449,7 +425,7 @@ Parameter | Type    | Description
 `mount`   | String  | Mountpoint name
 `data`    | Integer | Number of audio channels
 
-#### mount.mpegSamplerate
+#### mount.mpegSampleRate
 ```
 EVENT /test.mp3 mpeg_samplerate 44100
 ```
