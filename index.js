@@ -1,22 +1,9 @@
-var Feed = require(__dirname + '/src/Feed');
+/**
+ * Dependencies
+ */
+var Monitor = require(__dirname + '/src/Monitor');
 
 /**
- * Feed constructor
+ * Exports
  */
-module.exports.Feed = Feed;
-
-/**
- * Creates stats feed
- * @param {object} config
- * @param {function} callback
- */
-module.exports.createFeed = function(config, callback)
-{
-	try {
-		var feed = new Feed(config);
-  	feed.connect();
-  	callback(null, feed);	
-	} catch (err) {
-		callback(err);
-	}
-}
+module.exports = Monitor;

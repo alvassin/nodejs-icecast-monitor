@@ -1,0 +1,28 @@
+{
+  "name": "icecast-monitor",
+  "version": "0.0.1",
+  "description": "Icecast statistics processor with handy nodejs interface.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvassin/nodejs-icecast-monitor.git"
+  },
+  "author": "Alexander Vasin <hello@alvass.in>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alvassin/nodejs-icecast-monitor/issues"
+  },
+  "homepage": "https://github.com/alvassin/nodejs-icecast-monitor#readme",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "sax": "^1.1.1"
+  }
+}

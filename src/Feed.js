@@ -3,6 +3,7 @@
  */
 var EventEmitter = require('events').EventEmitter;
 var net = require('net');
+var Param = require(__dirname + '/Param');
 var util = require('util');
 
 /**
@@ -11,16 +12,16 @@ var util = require('util');
 module.exports = Feed;
 
 /**
- * Constructor
- * @param object options
+ * Constructor.
+ *
+ * @param {object} options
  */
 function Feed(options) {
   this.config = {
-    host     : null,
-    port     : 80,
-    user     : null,
-    password : null,
-    ssl      : false,
+    host: null,
+    port: 80,
+    user: null,
+    password: null
   };
 
   // Handle options input
@@ -40,7 +41,7 @@ function Feed(options) {
 util.inherits(Feed, EventEmitter);
 
 /**
- * Connects to specified server & starts processing data
+ * Connect to specified server & start processing data.
  */
 Feed.prototype.connect = function() {
   
@@ -73,7 +74,8 @@ Feed.prototype.connect = function() {
 }
 
 /**
- * Processes raw icecast event
+ * Processes raw icecast event.
+ * 
  * @param {string} rawEvent
  */
 Feed.prototype.handle = function(rawEvent) {
@@ -101,7 +103,7 @@ Feed.prototype.handle = function(rawEvent) {
 }
 
 /**
- * Parse event from raw text line
+ * Parse event from raw text line.
  *
  * @param {string} line
  * @return {object}
@@ -109,6 +111,12 @@ Feed.prototype.handle = function(rawEvent) {
 Feed.prototype.parse = function(line) {
   
   var chunks = line.split(' ');
+
+  /**
+   * Event name prefix
+   * @var {string}
+   */
+  var prefix;
 
   /**
    * Event name
@@ -128,17 +136,17 @@ Feed.prototype.parse = function(line) {
    */
   var params = [];
 
-  // Parse data
+  // Parse event & data
   switch(chunks[0]) {
     case 'NEW':
-      name   = 'mount.' + chunks.shift().toLowerCase();
+      name   = chunks.shift().toLowerCase();
       mount  = chunks.pop();
       params = chunks;
       break;
 
     case 'DELETE':
     case 'FLUSH':
-      name  = 'mount.' + chunks.shift().toLowerCase();
+      name  = chunks.shift().toLowerCase();
       mount = chunks.shift();
         break;
 
@@ -147,159 +155,30 @@ Feed.prototype.parse = function(line) {
       if (type === 'mount') {
         mount = chunks[1];
       }
-      name      = this.normalizeEventName(type + '.' + chunks[2]);
+      name      = Param.normalizeName(chunks[2]);
       params    = chunks.slice(3);
         break;
 
     case 'INFO':
     default:
-      name = 'server.' + chunks.shift().toLowerCase();
+      name = chunks.shift().toLowerCase();
       params = [chunks.join(' ')];
         break;
   }
 
+  // Retrieve event name prefix
+  prefix = mount ? 'mount' : 'server';
+
   return {
-    name  : name,
+    name  : prefix + '.' + name,
     mount : mount,
-    data  : this.normalizeEventData(name, params),
+    data  : Param.normalizeData(name, params),
   };
 }
 
 /**
- * Normalizes event name
- * @param {string} name
- * @return {string}
- */
-Feed.prototype.normalizeEventName = function(event) {
-
-  /**
-   * Event name fixes
-   * @var {object}
-   */
-  var fixes = {
-    'mount.audioCodecid'      : 'mount.audioCodecId',
-    'mount.listenurl'         : 'mount.listenUrl',
-    'mount.outgoingKbitrate'  : 'mount.outgoingKBitrate',
-    'mount.totalMbytesSent'   : 'mount.totalMBytesSent',
-    'server.outgoingKbitrate' : 'server.outgoingKBitrate',
-    'server.streamKbytesRead' : 'server.streamKBytesRead',
-    'server.streamKbytesSent' : 'server.streamKBytesSent',
-  };
-
-  // Camelize event name
-  event = event.replace(/[\s_-](.)/g, function($1) { return $1.toUpperCase(); })
-               .replace(/\s|_|-/g, '')
-               .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
-
-  // Fix event name
-  if (typeof fixes[event] === 'string') {
-    event = fixes[event];
-  }
-
-  return event;
-}
-
-/**
- * Normalizes server event params
- * @param {string} name
- * @param {array} params
- * @return {mixed}
- */
-Feed.prototype.normalizeEventData = function(name, params) {
-
-  /**
-   * Result
-   * @var {mixed}
-   */
-  var result;
-
-  switch(name) {
-
-    case 'mount.audioInfo':
-      var items  = params.shift().split(';');
-      result = {};
-
-      for (var i in items) {
-        items[i] = items[i].split('=');
-        result[items[i][0]] = parseInt(items[i][1]);
-      }
-      break;
-
-    // Nothing to do
-    case 'mount.delete':
-    case 'mount.flush':
-      break;
-
-    // Integer values
-    case 'mount.audioCodecId':
-    case 'mount.bitrate':
-    case 'mount.connected':
-    case 'mount.incomingBitrate':
-    case 'mount.listenerConnections':
-    case 'mount.listenerPeak':
-    case 'mount.listeners':
-    case 'mount.maxListeners':
-    case 'mount.mpegChannels':
-    case 'mount.mpegSamplerate':
-    case 'mount.outgoingKBitrate':
-    case 'mount.public':
-    case 'mount.queueSize':
-    case 'mount.slowListeners':
-    case 'mount.totalBytesRead':
-    case 'mount.totalBytesSent':
-    case 'mount.totalMBytesSent':
-    case 'server.bannedIPs':
-    case 'server.build':
-    case 'server.clientConnections':
-    case 'server.clients':
-    case 'server.connections':
-    case 'server.fileConnections':
-    case 'server.listenerConnections':
-    case 'server.listeners':
-    case 'server.outgoingKBitrate':
-    case 'server.sourceClientConnections':
-    case 'server.sourceRelayConnections':
-    case 'server.sources':
-    case 'server.sourceTotalConnections':
-    case 'server.stats':
-    case 'server.statsConnections':
-    case 'server.streamKBytesRead':
-    case 'server.streamKBytesSent':
-      result = parseInt(params.shift());
-      break;
-
-    // String values
-    case 'mount.authenticator':
-    case 'mount.genre':
-    case 'mount.listenUrl':
-    case 'mount.metadataUpdated':
-    case 'mount.new':
-    case 'mount.serverDescription':
-    case 'mount.serverName':
-    case 'mount.serverType':
-    case 'mount.serverUrl':
-    case 'mount.sourceIp':
-    case 'mount.streamStart':
-    case 'mount.title':
-    case 'mount.ypCurrentlyPlaying':
-    case 'server.admin':
-    case 'server.host':
-    case 'server.info':
-    case 'server.location':
-    case 'server.serverId':
-    case 'server.serverStart':
-    default:
-      result = params.join(' ');
-      break;
-  }
-
-  return result;
-};
-
-/**
- * Disconnects from the server
+ * Disconnects from the server.
  */
 Feed.prototype.disconnect = function() {
   this.socket.destroy();
 };
-

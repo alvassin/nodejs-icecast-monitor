@@ -141,8 +141,8 @@ describe('Monitor.Feed', function() {
    */
   describe('server.admin', function () {
     it('should emit server.admin, server.* and * events', function (done) {
-      setupServerEvent('server.admin', 'email@example.com', done);
-      feed.handle('EVENT global admin email@example.com');
+      setupServerEvent('server.admin', 'admin@example.com', done);
+      feed.handle('EVENT global admin admin@example.com');
     });
   });
 
@@ -412,9 +412,9 @@ describe('Monitor.Feed', function() {
     });
   });
 
-  describe('mount.mpegSamplerate', function () {
-    it('should emit mount.mpegSamplerate, mount.* and * events', function (done) {
-      setupMountEvent('mount.mpegSamplerate', '/test.mp3', 44100, done);
+  describe('mount.mpegSampleRate', function () {
+    it('should emit mount.mpegSampleRate, mount.* and * events', function (done) {
+      setupMountEvent('mount.mpegSampleRate', '/test.mp3', 44100, done);
       feed.handle('EVENT /test.mp3 mpeg_samplerate 44100');
     });
   });
