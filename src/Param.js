@@ -75,6 +75,7 @@ module.exports.normalizeData = function(name, params) {
     case 'connections': 
     case 'fileConnections': 
     case 'incomingBitrate': 
+    case 'lag':
     case 'listenerConnections': 
     case 'listenerPeak': 
     case 'listeners': 
