@@ -1,5 +1,5 @@
 # Quickstart
-Package provides handy interface for collecting [icecast-kh](https://karlheyes.github.io/) statistics & monitoring (admin access is required). To install latest stable version you can use `npm install icecast-monitor` command.
+Package provides handy & powerful interface for collecting [icecast-kh](https://karlheyes.github.io/) statistics & monitoring (admin access is required). Has ability to deal with large data outputs. To install latest stable version you can use `npm install icecast-monitor` command.
 
 * [Options](#options)
 * [Methods](#methods)
@@ -8,25 +8,26 @@ Package provides handy interface for collecting [icecast-kh](https://karlheyes.g
   * [getSources](#monitorgetsources)
   * [getSource](#monitorgetsource)
   * [getListeners](#monitorgetlisteners)
+  * [createStatsXmlStream](#monitorcreatestatsxmlstream)
 * [Feed](#feed)
   * [Events](#events)
   * [Methods](#methods-1)
+* [XmlStreamParser](#xmlstreamparser)
+  * [Events](#events-1)
 
 # Options
 
 To access icecast monitor features, you need to create `Monitor` instance:
-```
+```js
 var Monitor = require('icecast-monitor');
-
 var monitor = new Monitor({
   host: 'icecast.dev',
   port: 80,
   user: 'admin',
-  password: 'hackme',
-  ssl: true
+  password: 'hackme'
 });
 ```
-Following parameters are accepted:
+Following parameters are available:
 
 Parameter  | Type    | Required | Description
 -----------|---------|----------|------------
@@ -34,7 +35,6 @@ Parameter  | Type    | Required | Description
 `port`     | Integer | No       | Port number (defaults to `80`)
 `user`     | String  | Yes      | Admin username
 `password` | String  | Yes      | Admin password
-`ssl`      | Boolean | No       | Use ssl or not (defaults to `false`)
 
 # Methods
 #### monitor.createFeed
@@ -42,7 +42,6 @@ Creates [Monitor.Feed](#feed) instance, which establishes persistent connection 
 
 ```js
 monitor.createFeed(function(err, feed) {
-
   if (err) throw err;
   
   // Handle wildcard events
@@ -58,7 +57,7 @@ monitor.createFeed(function(err, feed) {
 ```
 
 #### monitor.getServerInfo
-Returns described below information about icecast server.
+Returns information about icecast server. Please see [Monitor.XmlStreamParser `server` event](#server) data for details.
 
 ```js
 monitor.getServerInfo(function(err, server) {
@@ -67,33 +66,8 @@ monitor.getServerInfo(function(err, server) {
 });
 ```
 
-Parameter                 | Type    | Description
---------------------------|---------|------------
-`admin`                   | String  | Administrator's email
-`bannedIPs`               | Integer | Banned ip addresses number
-`build`                   | Integer | Build number
-`clientConnections`       | Integer | Total client (sources, listeners, web requests, etc) connections number
-`clients`                 | Integer | Current clients (sources, listeners, web requests, etc) number
-`connections`             | Integer | ?
-`fileConnections`         | Integer | File connections number
-`host`                    | String  | Host DNS or IP address (is defined by `hostname` setting in icecast config)
-`listenerConnections`     | Integer | Listeners connections number
-`listeners`               | Integer | Listeners number
-`location`                | String  | Server location (is defined by `location` setting in icecast config)
-`outgoingKBitrate`        | Integer | Outgoing bitrate in Kbps
-`serverId`                | String  | Server identifier (is defined by `server-id` setting in icecast config)
-`serverStart`             | String  | Server start date
-`sourceClientConnections` | Integer | Source clients connections number
-`sourceRelayConnections`  | Integer | Source relays connections number
-`sources`                 | Integer | Sources (mountpoints) number
-`sourceTotalConnections`  | Integer | Total connections number
-`stats`                   | Integer | Number currently connected clients using STATS HTTP method (like [Monitor.Feed](#feed)
-`statsConnections`        | Integer | STATS HTTP method total connections number
-`streamKBytesRead`        | Integer | Streaming incoming traffic (KB)
-`streamKBytesSent`        | Integer | Streaming outgoing traffic (KB)
-
 #### monitor.getSources
-Returns array with information about all audio sources (without detailed listeners information).
+Returns array with all audio sources (without detailed listeners information). Please see [Monitor.XmlStreamParser `source` event](#source) for data provided about every source.
 
 ```js
 monitor.getSources(function(err, sources) {
@@ -101,85 +75,72 @@ monitor.getSources(function(err, sources) {
   console.log(sources);
 });
 ```
-Following parameters are returned for every source:
-
-Parameter             | Type    | Description
-----------------------|---------|------------
-`mount`               | String  | Mountpoint
-`audioCodecId`        | Integer | Audio codec id: 2 for mp3, 10 for aac
-`audioInfo`           | String  | Audio encoding information
-`authenticator`       | String  | Authentication scheme
-`bitrate`             | Integer | User-defined bitrate (Kbps)
-`connected`           | Integer | Connected time in seconds
-`genre`               | String  | User-defined genre
-`incomingBitrate`     | Integer | Source stream bitrate (bps)
-`listenerConnections` | Integer | Listener connections number
-`listenerPeak`        | Integer | Maximum detected number of simultaneous users 
-`listeners`           | Integer | Current listeners number
-`listenUrl`           | String  | Audio stream url
-`maxListeners`        | Integer | Listeners limit
-`metadataUpdated`     | String  | Last metadata update date
-`mpegChannels`        | Integer | Mpeg channels number
-`mpegSampleRate`      | Integer | Mpeg sample rate
-`outputKBitrate`      | Integer | Outgoing bitrate for all listeners (Kbps)
-`public`              | Integer | Source advertisement: `-1` - source client or relay determines if mountpoint should be advertised, `0` - disables advertisement, `1` - forces advertisement
-`queueSize`           | Integer | Can vary (typically) because lagging clients cause the size to increase until they either get kicked off or they catch up
-`serverDescription`   | String  | User-defined description
-`serverName`          | String  | User-defined name
-`serverType`          | String  | Mime type
-`serverUrl`           | String  | User-defined url
-`slowListeners`       | Integer | Slow listeners number
-`sourceIp`            | String  | Source ip address
-`streamStart`         | String  | Date, when stream started
-`title`               | String  | Track name
-`totalBytesRead`      | Integer | Incoming traffic
-`totalBytesSent`      | Integer | Outgoing traffic (Bytes)
-`totalMBytesSent`     | Integer | Outgoing traffic (MBytes)
-`ypCurrentlyPlaying`  | String  | YP track title
 
 #### monitor.getSource
-Returns information about source with specified mount name & detailed information about every connected listener.
+Provides detailed information about source & every connected listener.
 
 ```js
-monitor.getSource(function(err, source) {
+monitor.getSource('/some-mountpoint', function(err, source) {
   if (err) throw err;
   console.log(source);
 });
 ```
-In addition to [getSources](#monitorgetsources) method parameters returns following listeners data:
-
-Parameter                | Type    | Description
--------------------------|---------|------------
-`listeners`              | Array   | Listeners array
-`listeners.$i.id`        | Integer | Icecast internal id, can be used to kick listeners, move them between mounts, etc.
-`listeners.$i.ip`        | String  | Listener's ip address
-`listeners.$i.userAgent` | String  | Listener's user agent
-`listeners.$i.referrer`  | String  | Url, where listener came from
-`listeners.$i.lag`       | Integer | ?
-`listeners.$i.connected` | Integer | Connected time in seconds
+Returns same data as [Monitor.XmlStreamParser `source` event](#source), with one difference: `listeners` parameter will contain `array` with [information about every listener](#listener).
 
 #### monitor.getListeners
-Returns array with all listeners, connected to current icecast server. *Can produce huge amounts of data, use wisely.*
+Returns array with all listeners, connected to icecast server. Please see [Monitor.XmlStreamParser `listener` event](#listener) data for details. *Can produce huge amounts of data, use wisely.*
 
 ```js
 monitor.getListeners(function(err, listeners) {
   if (err) throw err;
   console.log(listeners);
-})
+});
 ```
-For every listener following parameters are provided:
 
-Parameter   | Type    | Description
-------------|---------|------------
-`id`        | Integer | Icecast internal id, can be used to kick listeners, move them between mounts, etc.
-`ip`        | String  | Listener's ip address
-`userAgent` | String  | Listener's user agent
-`referrer`  | String  | Url, where listener came from
-`lag`       | Integer | ?
-`connected` | Integer | Connected time in seconds
+#### monitor.createStatsXmlStream
+Performs HTTP request to given icecast url path and returns stream for further processing. Can be useful to process large icecast XML output using [Monitor.XmlStreamParser](#xmlstreamparser).
+
+We use following icecast url paths:
+* `/admin/stats`
+  * icecast server information
+  * sources detailed information
+  * no detailed listeners information
+* `/admin/stats?mount=/$mount`
+  * icecast server information
+  * specified source information
+  * detailed information about connected listeners
+* `/admin/listmounts?with_listeners`
+  * no information about icecast server
+  * minimal information about sources
+  * and detailed information about all icecast listeners
+
+```js
+// Collect sources without storing them in a memory
+monitor.createStatsXmlStream('/admin/stats', function(err, xmlStream) {
+  if (err) throw err;
+  
+  var xmlParser = new Monitor.XmlStreamParser();
+ 
+  xmlParser.on('error', function(err) {
+    console.log('error', err); 
+  });
+  
+  xmlParser.on('source', function(source) {
+    // Do work with received source
+    console.log('source', source);
+  });
+
+  // Finish event is being piped from xmlStream
+  xmlParser.on('finish', function() {
+    console.log('all sources are processed');
+  });
+
+  xmlStream.pipe(xmlParser);
+});
+```
 
 # Feed
-Establishes persistent connection with icecast using STATS HTTP method & processes events feed. Best way to create is to use [createFeed](#createfeed) method, which injects all necessary parameters.
+Establishes persistent connection with icecast using STATS HTTP method & processes events feed. Best way to create is to use [monitor.createFeed](#createfeed) method, which injects all necessary parameters.
 
 ## Events
 
@@ -832,3 +793,133 @@ monitor.createFeed(function(err, feed) {
   });
 });
 ```
+
+# XmlStreamParser
+[Writeable stream](https://nodejs.org/api/stream.html#stream_class_stream_writable), that allows to retrieve sources, listeners & server information from icecast xml stream. Icecast xml stream can be retrieved using [monitor.createStatsXmlStream](#monitorcreatestatsxmlstream) method.
+
+Using XmlStreamParser directly can be more memory-effective when dealing with large icecast output, then using [monitor.getServerInfo](#monitorgetserverinfo), [monitor.getSources](#monitorgetsources), [monitor.getSource](#monitorgetsource) and [monitor.getListeners](#monitorgetlisteners) methods, because those methods have to store information in memory before it is returned in callback.
+
+```js
+// Collect sources without storing them in a memory
+monitor.createStatsXmlStream('/admin/stats', function(err, xmlStream) {
+  if (err) throw err;
+
+  var xmlParser = new Monitor.XmlStreamParser();
+
+  // Handle errors
+  xmlParser.on('error', function(err) {
+    console.log('error', err); 
+  });
+  
+  // Handle server info
+  xmlParser.on('server', function(server) {
+    console.log('server', server);
+  });
+  
+  // Handle sources
+  xmlParser.on('source', function(source) {
+    console.log('source', source);
+  });
+
+  // Handle listeners
+  xmlParser.on('listener', function(listener) {
+    console.log('listener', listener);
+  });
+
+  // Xml stream finished
+  xmlParser.on('finish', function() {
+    console.log('data is finished');
+  });
+
+  xmlStream.pipe(xmlParser);
+});
+```
+
+## Events
+* [`error`](#error)
+* [`server`](#server)
+* [`source`](#source)
+* [`listener`](#listener)
+* [`finish`](https://nodejs.org/api/stream.html#stream_event_finish)
+
+#### error
+Represents error, that happened while parsing xml stream.
+
+#### server
+Is emitted when xml stream processing is finished. Returns following information about icecast server:
+
+Parameter                 | Type    | Description
+--------------------------|---------|------------
+`admin`                   | String  | Administrator's email
+`bannedIPs`               | Integer | Banned ip addresses number
+`build`                   | Integer | Build number
+`clientConnections`       | Integer | Total client (sources, listeners, web requests, etc) connections number
+`clients`                 | Integer | Current clients (sources, listeners, web requests, etc) number
+`connections`             | Integer | ?
+`fileConnections`         | Integer | File connections number
+`host`                    | String  | Host DNS or IP address (is defined by `hostname` setting in icecast config)
+`listenerConnections`     | Integer | Listeners connections number
+`listeners`               | Integer | Listeners number
+`location`                | String  | Server location (is defined by `location` setting in icecast config)
+`outgoingKBitrate`        | Integer | Outgoing bitrate in Kbps
+`serverId`                | String  | Server identifier (is defined by `server-id` setting in icecast config)
+`serverStart`             | String  | Server start date
+`sourceClientConnections` | Integer | Source clients connections number
+`sourceRelayConnections`  | Integer | Source relays connections number
+`sources`                 | Integer | Sources (mountpoints) number
+`sourceTotalConnections`  | Integer | Total connections number
+`stats`                   | Integer | Number currently connected clients using STATS HTTP method (like [Monitor.Feed](#feed)
+`statsConnections`        | Integer | STATS HTTP method total connections number
+`streamKBytesRead`        | Integer | Streaming incoming traffic (KB)
+`streamKBytesSent`        | Integer | Streaming outgoing traffic (KB)
+
+#### source
+Is emitted when source processing is finished. Returns following information for every source:
+
+Parameter             | Type    | Description
+----------------------|---------|------------
+`mount`               | String  | Mountpoint
+`audioCodecId`        | Integer | Audio codec id: 2 for mp3, 10 for aac
+`audioInfo`           | String  | Audio encoding information
+`authenticator`       | String  | Authentication scheme
+`bitrate`             | Integer | User-defined bitrate (Kbps)
+`connected`           | Integer | Connected time in seconds
+`genre`               | String  | User-defined genre
+`incomingBitrate`     | Integer | Source stream bitrate (bps)
+`listenerConnections` | Integer | Listener connections number
+`listenerPeak`        | Integer | Maximum detected number of simultaneous users 
+`listeners`           | Integer | Current listeners number
+`listenUrl`           | String  | Audio stream url
+`maxListeners`        | Integer | Listeners limit
+`metadataUpdated`     | String  | Last metadata update date
+`mpegChannels`        | Integer | Mpeg channels number
+`mpegSampleRate`      | Integer | Mpeg sample rate
+`outputKBitrate`      | Integer | Outgoing bitrate for all listeners (Kbps)
+`public`              | Integer | Source advertisement: `-1` - source client or relay determines if mountpoint should be advertised, `0` - disables advertisement, `1` - forces advertisement
+`queueSize`           | Integer | Can vary (typically) because lagging clients cause the size to increase until they either get kicked off or they catch up
+`serverDescription`   | String  | User-defined description
+`serverName`          | String  | User-defined name
+`serverType`          | String  | Mime type
+`serverUrl`           | String  | User-defined url
+`slowListeners`       | Integer | Slow listeners number
+`sourceIp`            | String  | Source ip address
+`streamStart`         | String  | Date, when stream started
+`title`               | String  | Track name
+`totalBytesRead`      | Integer | Incoming traffic
+`totalBytesSent`      | Integer | Outgoing traffic (Bytes)
+`totalMBytesSent`     | Integer | Outgoing traffic (MBytes)
+`ypCurrentlyPlaying`  | String  | YP track title
+
+#### listener
+Is emitted when listener processing is finished. Returns following information for every listener:
+
+Parameter   | Type    | Description
+------------|---------|------------
+`id`        | Integer | Icecast internal id, can be used to kick listeners, move them between mounts, etc.
+`ip`        | String  | Listener's ip address
+`userAgent` | String  | Listener's user agent
+`referrer`  | String  | Url, where listener came from
+`lag`       | Integer | ?
+`connected` | Integer | Connected time in seconds
+`mount`     | String  | Source mounpoint
+
