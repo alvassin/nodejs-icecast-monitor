@@ -3,7 +3,7 @@
  */
 var Feed = require(__dirname + '/Feed');
 var http = require('http');
-var XmlParser = require(__dirname + '/XmlParser');
+var XmlStreamParser = require(__dirname + '/XmlStreamParser');
 
 /**
  * Exports
@@ -28,7 +28,8 @@ function Monitor(options) {
 Monitor.Feed = Feed;
 
 /**
- * Create stats feed
+ * Create stats feed.
+ *
  * @param {function} callback
  */
 Monitor.prototype.createFeed = function(callback) {
@@ -42,35 +43,63 @@ Monitor.prototype.createFeed = function(callback) {
 };
 
 /**
- * Returns server status
+ * Returns information about server.
+ *
  * @param {function} callback
  */
 Monitor.prototype.getServerInfo = function(callback) {
-	this.getXmlStream('/admin/stats', function(err, xmlStream) {
+	this.createStatsXmlStream('/admin/stats', function(err, xmlStream) {
 		
 		if (err) {
 			callback(err);
 			return;
 		}
 
-		XmlParser.parseServerData(xmlStream, callback);
+		var xmlParser = new XmlStreamParser();
+
+		xmlParser.on('error', function(err) {
+			callback(err);
+		});
+
+		xmlParser.on('server', function(server) { 
+			callback(null, server); 
+		});
+
+		xmlStream.pipe(xmlParser);
 	});
 }
 
 /**
- * Returns sources list
+ * Get sources list.
+ *
  * @param {function} callback
  */
 Monitor.prototype.getSources = function(callback) {
-	var monitor = this;
-	monitor.getXmlStream('/admin/stats', function(err, xmlStream) {
-
+	this.createStatsXmlStream('/admin/stats', function(err, xmlStream) {
+		
 		if (err) {
 			callback(err);
 			return;
 		}
 
-		XmlParser.parseSourcesData(xmlStream, callback);
+		var sources = [];
+
+		var xmlParser = new XmlStreamParser();
+
+		xmlParser.on('error', function(err) {
+			callback(err); 
+		});
+
+		xmlParser.on('source', function(source) {
+			sources.push(source);
+		});
+
+		// Finish event is being piped from xmlStream
+		xmlParser.on('finish', function() {
+			callback(null, sources);
+		});
+
+		xmlStream.pipe(xmlParser);
 	});
 }
 
@@ -79,22 +108,35 @@ Monitor.prototype.getSources = function(callback) {
  * @param {function} callback
  */
 Monitor.prototype.getSource = function(mount, callback) {
-	this.getXmlStream('/admin/stats?mount=' + mount, function(err, xmlStream) {
-
+	this.createStatsXmlStream('/admin/stats?mount=' + mount, function(err, xmlStream) {
+		
 		if (err) {
 			callback(err);
 			return;
 		}
 
-		XmlParser.parseSourcesData(xmlStream, function(err, sources) {
+		var source;
 
-			if (err) {
-				callback(err);
-				return;
-			}
+		var xmlParser = new XmlStreamParser();
 
-			callback(null, sources.shift());
+		xmlParser.on('error', function(err) {
+			callback(err); 
 		});
+
+		xmlParser.on('source', function(data) {
+			source = data;
+		});
+
+		// Finish event is being piped from xmlStream
+		xmlParser.on('finish', function() {
+			if (source) {
+				callback(null, source);
+			} else {
+				callback(new Error('Mount "' + mount + '" not found'));
+			}
+		});
+
+		xmlStream.pipe(xmlParser);
 	});
 }
 
@@ -103,23 +145,31 @@ Monitor.prototype.getSource = function(mount, callback) {
  * @param {function} callback
  */
 Monitor.prototype.getListeners = function(callback) {
-	var monitor = this;
-	monitor.getXmlStream('/admin/listmounts?with_listeners', function(err, xmlStream) {
-
+	this.createStatsXmlStream('/admin/listmounts?with_listeners', function(err, xmlStream) {
+		
 		if (err) {
 			callback(err);
 			return;
 		}
 
-		XmlParser.parseListenersData(xmlStream, function(err, listeners) {
+		var listeners = [];
 
-			if (err) {
-				callback(err);
-				return;
-			}
+		var xmlParser = new XmlStreamParser();
 
+		xmlParser.on('error', function(err) {
+			callback(err); 
+		});
+
+		xmlParser.on('listener', function(listener) {
+			listeners.push(listener);
+		});
+
+		// Finish event is being piped from xmlStream
+		xmlParser.on('finish', function() {
 			callback(null, listeners);
 		});
+
+		xmlStream.pipe(xmlParser);
 	});
 }
 
@@ -128,7 +178,7 @@ Monitor.prototype.getListeners = function(callback) {
  * @param {string} urlPath
  * @param {function} callback
  */
-Monitor.prototype.getXmlStream = function(urlPath, callback) {
+Monitor.prototype.createStatsXmlStream = function(urlPath, callback) {
 	
 	var monitor = this;
 

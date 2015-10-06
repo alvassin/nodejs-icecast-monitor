@@ -110,6 +110,7 @@ var config = {
 
 /**
  * Creates data item with normalized tag names as keys and null values.
+ *
  * @param {mixed} item
  * @param {array} tags
  */
@@ -186,16 +187,12 @@ function XmlStreamParser () {
 	parser.saxStream.on('closetag', function(tagName) {
 		parser.handleCloseTag(tagName);
 	});
-
-	// Handle file end
-	parser.saxStream.on('end', function() {
-		parser.emit('end');
-	});
 };
 util.inherits(XmlStreamParser, stream.Writable);
 
 /**
- * Handles tag opening
+ * Handle tag opening.
+ *
  * @param {object} node
  */
 XmlStreamParser.prototype.handleOpenTag = function(node) {
@@ -243,7 +240,8 @@ XmlStreamParser.prototype.handleOpenTag = function(node) {
 }
 
 /**
- * Handles text
+ * Handles text.
+ *
  * @param {string} text
  */
 XmlStreamParser.prototype.handleText = function(text) {
@@ -268,7 +266,8 @@ XmlStreamParser.prototype.handleText = function(text) {
 }
 
 /**
- * Handles tag closing
+ * Handles tag closing.
+ *
  * @param {string} tagName
  */
 XmlStreamParser.prototype.handleCloseTag = function(tagName) {
@@ -300,11 +299,13 @@ XmlStreamParser.prototype.handleCloseTag = function(tagName) {
 }
 
 /**
- * Input data handler
- * @param chink
+ * Handle input data.
+ *
+ * @param chunk
  * @param encoding
  * @param {function} done
  */
 XmlStreamParser.prototype._write = function (chunk, encoding, done) {
-  this.saxStream.write(chunk, encoding, done);
+	this.saxStream.write(chunk);
+	done();
 }

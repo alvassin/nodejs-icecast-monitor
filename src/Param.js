@@ -7,7 +7,7 @@
 module.exports.normalizeName = function(name) {
 
   /**
-   * Exceptions, camelCase is not enough
+   * Exceptions, where camelCase is not enough
    * @var {object}
    */
   var exceptions = {
