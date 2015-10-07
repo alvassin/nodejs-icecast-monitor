@@ -17,6 +17,7 @@ module.exports = Feed;
  * @param {object} options
  */
 function Feed(options) {
+  
   this.config = {
     host: null,
     port: 80,
@@ -64,7 +65,7 @@ Feed.prototype.connect = function() {
     var lines = data.toString().split('\n');
     for (var i in lines) {
       if ( ! lines[i]) continue;
-      feed.handleEvent(lines[i]);
+      feed.handle(lines[i]);
     }
   });
 

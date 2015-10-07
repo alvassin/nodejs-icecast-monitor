@@ -12,14 +12,31 @@ module.exports = Monitor;
 
 /**
  * Constructor
+ *
+ * @param {object} options
  */
 function Monitor(options) {
 
-  /**
-   * Configuration
-   * @var {object}
-   */
-  this.options = options;
+  this.config = {
+    host: null,
+    port: 80,
+    user: null,
+    password: null
+  };
+
+  // Handle options input
+  for (var key in options) {
+    if (typeof (this.config[key] !== 'undefined')) {
+      this.config[key] = options[key];
+    }
+  }
+
+  // Check that all config options are defined
+  for (var key in this.config) {
+    if (this.config[key] == null) {
+      throw new Error('Option "' + key + '" is required');
+    }
+  }  
 }
 
 /**
@@ -185,13 +202,11 @@ Monitor.prototype.getListeners = function(callback) {
  */
 Monitor.prototype.createStatsXmlStream = function(urlPath, callback) {
   
-  var monitor = this;
-
   var req = http.request({
-    hostname: monitor.options.host,
-    port: monitor.options.port,
+    hostname: this.config.host,
+    port: this.config.port,
     path: urlPath,
-    auth: monitor.options.user + ':' + monitor.options.password
+    auth: this.config.user + ':' + this.config.password
   }, function(res) {
 
     if (res.statusCode !== 200) {
