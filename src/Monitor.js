@@ -104,9 +104,8 @@ Monitor.prototype.getSources = function(callback) {
       return;
     }
 
-    var sources = [];
-
     var xmlParser = new XmlStreamParser();
+    var sources = [];
 
     xmlParser.on('error', function(err) {
       callback(err); 
@@ -137,21 +136,29 @@ Monitor.prototype.getSource = function(mount, callback) {
       return;
     }
 
-    var source;
-
     var xmlParser = new XmlStreamParser();
+    var source;
+    var listeners = [];
 
+    // Handle errors
     xmlParser.on('error', function(err) {
       callback(err); 
     });
 
+    // Retrieve source data
     xmlParser.on('source', function(data) {
       source = data;
+    });
+
+    // Retrieve listeners data
+    xmlParser.on('listener', function(listener) {
+      listeners.push(listener);
     });
 
     // Finish event is being piped from xmlStream
     xmlParser.on('finish', function() {
       if (source) {
+        source.listeners = listeners;
         callback(null, source);
       } else {
         callback(new Error('Mount "' + mount + '" not found'));
@@ -174,9 +181,8 @@ Monitor.prototype.getListeners = function(callback) {
       return;
     }
 
-    var listeners = [];
-
     var xmlParser = new XmlStreamParser();
+    var listeners = [];
 
     xmlParser.on('error', function(err) {
       callback(err); 
