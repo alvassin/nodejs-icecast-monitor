@@ -1,5 +1,7 @@
 # Quickstart
-Package provides handy & powerful interface for collecting [icecast-kh](https://karlheyes.github.io/) statistics & monitoring (admin access is required). Has ability to deal with large data outputs. To install latest stable version you can use `npm install icecast-monitor` command.
+Package provides handy & powerful interface for collecting [icecast-kh](https://karlheyes.github.io/) statistics & monitoring (admin access is required). Can deal with large data outputs (via XmlStreamParser stream API). 
+
+To install latest stable version use `npm install icecast-monitor` command.
 
 * [Options](#options)
 * [Methods](#methods)
@@ -17,7 +19,7 @@ Package provides handy & powerful interface for collecting [icecast-kh](https://
 
 # Options
 
-To access icecast monitor features, you need to create `Monitor` instance:
+To access icecast monitor features create `Monitor` instance:
 ```js
 var Monitor = require('icecast-monitor');
 var monitor = new Monitor({
@@ -27,7 +29,7 @@ var monitor = new Monitor({
   password: 'hackme'
 });
 ```
-Following parameters are available:
+Following constructor parameters are available:
 
 Parameter  | Type    | Required | Description
 -----------|---------|----------|------------
@@ -77,7 +79,7 @@ monitor.getSources(function(err, sources) {
 ```
 
 #### monitor.getSource
-Provides detailed information about source & every connected listener.
+Provides detailed information about specified source & its listeners.
 
 ```js
 monitor.getSource('/some-mountpoint', function(err, source) {
