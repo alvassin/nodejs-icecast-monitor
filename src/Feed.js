@@ -100,7 +100,7 @@ Feed.prototype.handleChunk = function(chunk) {
 
   for (var i = 0; i < lines.length; i++) {
     lines[i] = lines[i].trim();
-    if (lines[i]) feed.handleRawEvent(lines[i]);
+    if (lines[i]) this.handleRawEvent(lines[i]);
   }
 }
 
