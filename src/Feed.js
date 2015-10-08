@@ -5,7 +5,6 @@ var EventEmitter = require('events').EventEmitter;
 var http = require('http');
 var Param = require(__dirname + '/Param');
 var util = require('util');
-var request = require('request');
 
 /**
  * Module exports
