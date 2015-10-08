@@ -1,0 +1,66 @@
+
+<?xml version="1.0"?>
+<icestats>
+  <admin>admin@example.com</admin>
+  <banned_IPs>0</banned_IPs>
+  <build>20150616004931</build>
+  <client_connections>1383589</client_connections>
+  <clients>56</clients>
+  <connections>1532635</connections>
+  <file_connections>4248</file_connections>
+  <host>icecast.dev</host>
+  <listener_connections>286175</listener_connections>
+  <listeners>9</listeners>
+  <location>RU</location>
+  <outgoing_kbitrate>1363</outgoing_kbitrate>
+  <server_id>Icecast 2.4.0-kh1</server_id>
+  <server_start>06/Jul/2015:00:19:34 +0300</server_start>
+  <source_client_connections>0</source_client_connections>
+  <source_relay_connections>1745</source_relay_connections>
+  <source_total_connections>1745</source_total_connections>
+  <sources>45</sources>
+  <stats>0</stats>
+  <stats_connections>1</stats_connections>
+  <stream_kbytes_read>3748714817</stream_kbytes_read>
+  <stream_kbytes_sent>1678120564</stream_kbytes_sent>
+  <source mount="/test.mp3">
+    <audio_codecid>2</audio_codecid>
+    <audio_info>channels=2;samplerate=44100;bitrate=128</audio_info>
+    <authenticator>command</authenticator>
+    <bitrate>128</bitrate>
+    <connected>85218</connected>
+    <genre>Misc</genre>
+    <incoming_bitrate>128064</incoming_bitrate>
+    <listener_connections>36</listener_connections>
+    <listener_peak>1</listener_peak>
+    <listeners>0</listeners>
+    <listenurl>http://icecast.dev:80/test.mp3</listenurl>
+    <max_listeners>-1</max_listeners>
+    <metadata_updated>24/Aug/2015:02:07:12 +0300</metadata_updated>
+    <mpeg_channels>2</mpeg_channels>
+    <mpeg_samplerate>44100</mpeg_samplerate>
+    <outgoing_kbitrate>0</outgoing_kbitrate>
+    <public>1</public>
+    <queue_size>64784</queue_size>
+    <server_description>My station description</server_description>
+    <server_name>TestFM</server_name>
+    <server_type>audio/mpeg</server_type>
+    <server_url>http://example.com/</server_url>
+    <slow_listeners>0</slow_listeners>
+    <source_ip>icecast.dev</source_ip>
+    <stream_start>23/Aug/2015:02:26:52 +0300</stream_start>
+    <title>Metallica - I Disappear</title>
+    <total_bytes_read>1363644219</total_bytes_read>
+    <total_bytes_sent>3789824</total_bytes_sent>
+    <total_mbytes_sent>3</total_mbytes_sent>
+    <yp_currently_playing>Metallica - I Disappear</yp_currently_playing>
+    <listener id="1535115">
+      <ID>1535115</ID>
+      <IP>192.168.182.30</IP>
+      <UserAgent>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36</UserAgent>
+      <Referer>http://example.com/</Referer>
+      <lag>5643</lag>
+      <Connected>7895</Connected>
+    </listener>
+  </source>
+</icestats>
