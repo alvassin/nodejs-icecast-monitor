@@ -2,9 +2,10 @@
  * Dependencies
  */
 var EventEmitter = require('events').EventEmitter;
-var net = require('net');
+var http = require('http');
 var Param = require(__dirname + '/Param');
 var util = require('util');
+var request = require('request');
 
 /**
  * Module exports
@@ -18,12 +19,22 @@ module.exports = Feed;
  */
 function Feed(options) {
   
+  /**
+   * Configuration
+   * @var {object}
+   */
   this.config = {
     host: null,
     port: 80,
     user: null,
     password: null
   };
+
+  /**
+   * Chunk buffer
+   * @var {string}
+   */
+  this.chunkBuffer = '';
 
   // Handle options input
   for (var key in options) {
@@ -37,7 +48,7 @@ function Feed(options) {
     if (this.config[key] == null) {
       throw new Error('Option "' + key + '" is required');
     }
-  }  
+  }
 }
 util.inherits(Feed, EventEmitter);
 
@@ -48,30 +59,49 @@ Feed.prototype.connect = function() {
   
   var feed = this;
 
-  feed.socket = net.createConnection(feed.config.port, feed.config.host);
-  feed.socket.on('connect', function() {
-    feed.socket.write(
-      'STATS / HTTP/1.1\r\n' + 
-      'Authorization: Basic ' + new Buffer(feed.config.user + ':' + feed.config.password).toString('base64') + '\r\n' +
-      'User-Agent: icecast-monitor/0.0.1\r\n' + 
-      'Host: ' + feed.config.host + '\r\n' +
-      'Accept: */*\r\n\r\n'
-    );
+  this.req = http.request({
+    hostname: feed.config.host,
+    port: feed.config.port,
+    path: '/',
+    method: 'STATS',
+    auth: feed.config.user + ':' + feed.config.password,
+  }, function(res){
+    res.on('data', function (chunk) {
+      feed.handleChunk(chunk);
+    });
 
-    feed.emit('connect');
+    feed.req.socket.on('close', function() {
+      feed.emit('disconnect');
+    })
   });
 
-  feed.socket.on('data', function(data) {
-    var lines = data.toString().split('\n');
-    for (var i in lines) {
-      if ( ! lines[i]) continue;
-      feed.handle(lines[i]);
-    }
-  });
+  this.req.end();
+}
 
-  feed.socket.on('close', function() {
-    feed.emit('disconnect');
-  })
+/**
+ * Processes data chunk
+ *
+ * @param {Buffer} chunk
+ */
+Feed.prototype.handleChunk = function(chunk) {
+  chunk = chunk.toString();
+  var lines = chunk.split(/\r\n|\r|\n/g);
+
+  // Add buffer to the first line if present
+  if (this.chunkBuffer) {
+    lines[0] = this.chunkBuffer + lines[0];
+    this.chunkBuffer = '';
+  }
+
+  // Save last chunk to buffer if necessary
+  if (/\n$/.test(chunk) === false) {
+    this.chunkBuffer = lines.pop();
+  }
+
+  for (var i = 0; i < lines.length; i++) {
+    lines[i] = lines[i].trim();
+    if (lines[i]) feed.handleRawEvent(lines[i]);
+  }
 }
 
 /**
@@ -79,7 +109,7 @@ Feed.prototype.connect = function() {
  * 
  * @param {string} rawEvent
  */
-Feed.prototype.handle = function(rawEvent) {
+Feed.prototype.handleRawEvent = function(rawEvent) {
 
   var event = this.parse(rawEvent);
 
@@ -181,5 +211,5 @@ Feed.prototype.parse = function(line) {
  * Disconnects from the server.
  */
 Feed.prototype.disconnect = function() {
-  this.socket.destroy();
+  this.req.connection.destroy();
 };
