@@ -3,7 +3,7 @@
 
 Powerful & handy interface for icecast-kh monitoring & statistics collection (admin access is required).
 
-* Able to collect stats in realtime;
+* Able to collect icecast stats in realtime;
 * Provides easy access to all stats, available in web admin;
 * Can deal with very large amounts of data in memory-effective way;
 * Has only one npm dependency.
@@ -149,7 +149,7 @@ monitor.createStatsXmlStream('/admin/stats', function(err, xmlStream) {
 ```
 
 # Feed
-Establishes persistent connection with icecast using STATS HTTP method & processes events feed. Best way to create is to use [monitor.createFeed](#createfeed) method, which injects all necessary parameters.
+Establishes persistent connection with icecast using STATS HTTP method & processes events feed in realtime. Best way to create is to use [monitor.createFeed](#createfeed) method, which injects all necessary parameters.
 
 ## Events
 
