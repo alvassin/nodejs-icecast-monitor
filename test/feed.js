@@ -16,7 +16,7 @@ describe('Monitor.Feed', function() {
     });
   });
 
-  afterEach(function(){
+  afterEach(function() {
     feed = null;
   });
 

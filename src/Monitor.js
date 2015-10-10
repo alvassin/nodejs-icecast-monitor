@@ -202,7 +202,8 @@ Monitor.prototype.getListeners = function(callback) {
 }
 
 /**
- * Returns XML stream for further processing
+ * Returns XML stream for further processing.
+ *
  * @param {string} urlPath
  * @param {function} callback
  */
