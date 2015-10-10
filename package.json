@@ -1,6 +1,6 @@
 {
   "name": "icecast-monitor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Icecast realtime statistics processor with handy nodejs interface.",
   "main": "index.js",
   "directories": {
