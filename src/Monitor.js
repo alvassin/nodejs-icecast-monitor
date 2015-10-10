@@ -26,17 +26,17 @@ function Monitor(options) {
 
   // Handle options input
   for (var key in options) {
-    if (typeof (this.config[key] !== 'undefined')) {
+    if (this.config.hasOwnProperty(key)) {
       this.config[key] = options[key];
     }
   }
 
   // Check that all config options are defined
   for (var key in this.config) {
-    if (this.config[key] == null) {
+    if (this.config[key] === null) {
       throw new Error('Option "' + key + '" is required');
     }
-  }  
+  }
 }
 
 /**
@@ -89,7 +89,7 @@ Monitor.prototype.getServerInfo = function(callback) {
 
     xmlStream.pipe(xmlParser);
   });
-}
+};
 
 /**
  * Get sources list.
@@ -122,10 +122,12 @@ Monitor.prototype.getSources = function(callback) {
 
     xmlStream.pipe(xmlParser);
   });
-}
+};
 
 /**
- * Returns information with listeners for specified mount
+ * Returns information with listeners for specified mount.
+ *
+ * @param {string} mount
  * @param {function} callback
  */
 Monitor.prototype.getSource = function(mount, callback) {
@@ -167,7 +169,7 @@ Monitor.prototype.getSource = function(mount, callback) {
 
     xmlStream.pipe(xmlParser);
   });
-}
+};
 
 /**
  * Returns listeners information
@@ -199,7 +201,7 @@ Monitor.prototype.getListeners = function(callback) {
 
     xmlStream.pipe(xmlParser);
   });
-}
+};
 
 /**
  * Returns XML stream for further processing.

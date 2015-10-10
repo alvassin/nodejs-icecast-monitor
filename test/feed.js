@@ -22,7 +22,7 @@ describe('Monitor.Feed', function() {
 
   /**
    * Sets up err timeouts
-   * @param {array} expectedEvents
+   * @param {Array} expectedEvents
    */ 
   function setupErrTimeouts(expectedEvents) {
     var timeouts = {};
@@ -39,8 +39,8 @@ describe('Monitor.Feed', function() {
   /**
    * Asserts that given data is equal,
    * uses strict comparison for simple types, deep comparison for objects.
-   * @param {mixed} v1
-   * @param {mixed} v2
+   * @param v1
+   * @param v2
    * @param {string} message
    */
   function assertDataIsEqual(v1, v2, message) {
@@ -55,7 +55,7 @@ describe('Monitor.Feed', function() {
   /**
    * Sets up server event
    * @param {string} event
-   * @param {mixed} data
+   * @param data
    * @param {function} done
    */
   function setupServerEvent(event, data, done) {
@@ -71,7 +71,7 @@ describe('Monitor.Feed', function() {
 
       clearTimeout(errTimeouts[event]);
       if (--counter === 0) done();
-    })
+    });
 
     // Listen to type.* wildcard event
     feed.on('server.*', function(eventName, eventData) {
@@ -80,7 +80,7 @@ describe('Monitor.Feed', function() {
 
       clearTimeout(errTimeouts['server.*']);
       if (--counter === 0) done();
-    })
+    });
 
     // Listen to * wildcard event
     feed.on('*', function(eventName, eventData) {
@@ -89,14 +89,14 @@ describe('Monitor.Feed', function() {
 
       clearTimeout(errTimeouts['*']);
       if (--counter === 0) done();
-    })
+    });
   }
 
   /**
    * Sets up mount event
    * @param {string} event
    * @param {string} mount
-   * @param {mixed} data
+   * @param data
    * @param {function} done
    */
   function setupMountEvent(event, mount, data, done) {
@@ -113,7 +113,7 @@ describe('Monitor.Feed', function() {
 
       clearTimeout(errTimeouts[event]);
       if (--counter === 0) done();
-    })
+    });
 
     // Listen to type.* wildcard event
     feed.on('mount.*', function(eventName, eventMount, eventData) {
@@ -123,7 +123,7 @@ describe('Monitor.Feed', function() {
 
       clearTimeout(errTimeouts['mount.*']);
       if (--counter === 0) done();
-    })
+    });
 
     // Listen to * wildcard event
     feed.on('*', function(eventName, eventMount, eventData) {
@@ -133,7 +133,7 @@ describe('Monitor.Feed', function() {
 
       clearTimeout(errTimeouts['*']);
       if (--counter === 0) done();
-    })
+    });
   }
 
   /**

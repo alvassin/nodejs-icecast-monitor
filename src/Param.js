@@ -19,7 +19,7 @@ module.exports.normalizeName = function(name) {
     'outgoing_kbitrate'  : 'outgoingKBitrate',
     'total_mbytes_sent'  : 'totalMBytesSent',
     'stream_kbytes_read' : 'streamKBytesRead',
-    'stream_kbytes_sent' : 'streamKBytesSent',
+    'stream_kbytes_sent' : 'streamKBytesSent'
   };
 
   if (typeof exceptions[name] === 'string') {
@@ -30,14 +30,14 @@ module.exports.normalizeName = function(name) {
   return name.replace(/[\s_-](.)/g, function($1) { return $1.toUpperCase(); })
              .replace(/\s|_|-/g, '')
              .replace(/^(.)/, function($1) { return $1.toLowerCase(); });
-}
+};
 
 /**
  * Normalize param data.
  *
  * @param {string} name
- * @param {array} params
- * @return {mixed}
+ * @param {Array} params
+ * @return {number|string}
  */
 module.exports.normalizeData = function(name, params) {
 

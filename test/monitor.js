@@ -29,7 +29,7 @@ describe('Monitor', function() {
     }
 
     callback(null, fs.createReadStream(filePath));
-  }
+  };
 
   /**
    * @var {Monitor}
