@@ -126,4 +126,4 @@ module.exports.normalizeData = function(name, params) {
   }
 
   return result;
-}
+};
