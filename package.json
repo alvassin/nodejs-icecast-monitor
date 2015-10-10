@@ -1,7 +1,7 @@
 {
   "name": "icecast-monitor",
-  "version": "1.0.0",
-  "description": "Icecast statistics processor with handy nodejs interface.",
+  "version": "1.0.1",
+  "description": "Icecast realtime statistics processor with handy nodejs interface.",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -15,6 +15,14 @@
   },
   "author": "Alexander Vasin <hello@alvass.in>",
   "license": "MIT",
+  "keywords": [
+    "icecast",
+    "radio",
+    "listener",
+    "monitoring",
+    "stats",
+    "realtime"
+  ],
   "bugs": {
     "url": "https://github.com/alvassin/nodejs-icecast-monitor/issues"
   },
