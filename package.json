@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha -- -R spec"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,8 @@
   },
   "homepage": "https://github.com/alvassin/nodejs-icecast-monitor#readme",
   "devDependencies": {
+    "codeclimate-test-reporter": "^0.1.1",
+    "istanbul": "^0.3.22",
     "mocha": "^2.2.5"
   },
   "dependencies": {

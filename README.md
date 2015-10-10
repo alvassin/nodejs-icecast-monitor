@@ -1,5 +1,5 @@
 # Quickstart
-[![Build Status](https://travis-ci.org/alvassin/nodejs-icecast-monitor.svg?branch=master)](https://travis-ci.org/alvassin/nodejs-icecast-monitor) [![Code Climate](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor/badges/gpa.svg)](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor)
+[![Build Status](https://travis-ci.org/alvassin/nodejs-icecast-monitor.svg?branch=master)](https://travis-ci.org/alvassin/nodejs-icecast-monitor) [![Code Climate](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor/badges/gpa.svg)](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor) [![Test Coverage](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor/badges/coverage.svg)](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor/coverage)
 
 Powerful & handy interface for icecast-kh monitoring & statistics collection (admin access is required).
 
