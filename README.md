@@ -1,7 +1,12 @@
 # Quickstart
-[![Build Status](https://travis-ci.org/alvassin/nodejs-icecast-monitor.svg?branch=master)](https://travis-ci.org/alvassin/nodejs-icecast-monitor)
+[![Build Status](https://travis-ci.org/alvassin/nodejs-icecast-monitor.svg?branch=master)](https://travis-ci.org/alvassin/nodejs-icecast-monitor) [![Code Climate](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor/badges/gpa.svg)](https://codeclimate.com/github/alvassin/nodejs-icecast-monitor)
 
-Package provides handy & powerful interface for collecting [icecast-kh](https://karlheyes.github.io/) statistics & monitoring (admin access is required). Can deal with large data outputs (via XmlStreamParser stream API). 
+Powerful & handy interface for icecast-kh monitoring & statistics collection (admin access is required).
+
+* Able to collect icecast stats in realtime;
+* Provides easy access to all stats, available in web admin;
+* Can deal with very large amounts of data in memory-effective way;
+* Has only one npm dependency.
 
 To install latest stable version use `npm install icecast-monitor` command.
 
@@ -144,7 +149,7 @@ monitor.createStatsXmlStream('/admin/stats', function(err, xmlStream) {
 ```
 
 # Feed
-Establishes persistent connection with icecast using STATS HTTP method & processes events feed. Best way to create is to use [monitor.createFeed](#createfeed) method, which injects all necessary parameters.
+Establishes persistent connection with icecast using STATS HTTP method & processes events feed in realtime. Best way to create is to use [monitor.createFeed](#createfeed) method, which injects all necessary parameters.
 
 ## Events
 

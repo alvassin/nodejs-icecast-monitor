@@ -44,13 +44,13 @@ describe('Monitor.XmlStreamParser', function() {
         actual = server; 
       });
 
-       xmlParser.on('finish', function() {
-         assert.deepEqual(actual, expected, 'Event was not fired or data does not match');
+      xmlParser.on('finish', function() {
+        assert.deepEqual(actual, expected, 'Event was not fired or data does not match');
         done();
-       })
+      });
 
       xmlStream.pipe(xmlParser);
-      });
+    });
   });
 
   describe('source', function () {
@@ -106,16 +106,16 @@ describe('Monitor.XmlStreamParser', function() {
         actual = source; 
       });
 
-       xmlParser.on('finish', function() { 
-         assert.deepEqual(actual, expected, 'Event was not fired or data does not match');
+      xmlParser.on('finish', function() { 
+        assert.deepEqual(actual, expected, 'Event was not fired or data does not match');
         done();
-       })
+      });
 
       xmlStream.pipe(xmlParser);
     });
   });
 
-describe('listener', function () {
+  describe('listener', function () {
     it('should emit listener event', function (done) {
 
       var actual;
@@ -136,14 +136,14 @@ describe('listener', function () {
         assert(false, 'XmlStreamParser error: ' + err);
       });
 
-      xmlParser.on('listener', function(listener) { 
+      xmlParser.on('listener', function(listener) {
         actual = listener; 
       });
 
-       xmlParser.on('finish', function() { 
-         assert.deepEqual(actual, expected, 'Event was not fired or data does not match');
+      xmlParser.on('finish', function() { 
+        assert.deepEqual(actual, expected, 'Event was not fired or data does not match');
         done();
-       })
+      });
 
       xmlStream.pipe(xmlParser);
     });

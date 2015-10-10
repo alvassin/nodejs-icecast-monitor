@@ -37,14 +37,14 @@ function Feed(options) {
 
   // Handle options input
   for (var key in options) {
-    if (typeof (this.config[key] !== 'undefined')) {
+    if (this.config.hasOwnProperty(key)) {
       this.config[key] = options[key];
     }
   }
 
   // Check that all config options are defined
   for (var key in this.config) {
-    if (this.config[key] == null) {
+    if (this.config[key] === null) {
       throw new Error('Option "' + key + '" is required');
     }
   }
@@ -63,10 +63,10 @@ Feed.prototype.connect = function() {
     port: feed.config.port,
     path: '/',
     method: 'STATS',
-    auth: feed.config.user + ':' + feed.config.password,
+    auth: feed.config.user + ':' + feed.config.password
   }, function(res){
     res.on('data', function (chunk) {
-      feed.handleChunk(chunk);
+      feed.handleChunk(chunk.toString());
     });
 
     feed.req.socket.on('close', function() {
@@ -75,15 +75,14 @@ Feed.prototype.connect = function() {
   });
 
   this.req.end();
-}
+};
 
 /**
  * Processes data chunk
  *
- * @param {Buffer} chunk
+ * @param {string} chunk
  */
 Feed.prototype.handleChunk = function(chunk) {
-  chunk = chunk.toString();
   var lines = chunk.split(/\r\n|\r|\n/g);
 
   // Add buffer to the first line if present
@@ -101,7 +100,7 @@ Feed.prototype.handleChunk = function(chunk) {
     lines[i] = lines[i].trim();
     if (lines[i]) this.handleRawEvent(lines[i]);
   }
-}
+};
 
 /**
  * Processes raw icecast event.
@@ -130,7 +129,7 @@ Feed.prototype.handleRawEvent = function(rawEvent) {
 
   // Emit event
   this.emit.apply(this, [event.name].concat(params))
-}
+};
 
 /**
  * Parse event from raw text line.
@@ -152,7 +151,7 @@ Feed.prototype.parse = function(line) {
    * Event name
    * @var {string}
    */
-  var name;
+  var name = '';
 
   /**
    * Mountpoint
@@ -202,9 +201,9 @@ Feed.prototype.parse = function(line) {
   return {
     name  : prefix + '.' + name,
     mount : mount,
-    data  : Param.normalizeData(name, params),
+    data  : Param.normalizeData(name, params)
   };
-}
+};
 
 /**
  * Disconnects from the server.

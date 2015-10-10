@@ -45,7 +45,7 @@ var config = {
       'stats',
       'stats_connections',
       'stream_kbytes_read',
-      'stream_kbytes_sent',
+      'stream_kbytes_sent'
     ],
 
     /**
@@ -93,8 +93,8 @@ var config = {
       'UserAgent',
       'Referer',
       'lag',
-      'Connected',
-    ],
+      'Connected'
+    ]
   },
 
   /**
@@ -106,21 +106,20 @@ var config = {
     3: 'source',
     4: 'listener'
   }
-}
+};
 
 /**
  * Creates data item with normalized tag names as keys and null values.
  *
- * @param {mixed} item
- * @param {array} tags
+ * @param {Array} tags
  */
 function initDataItem(tags) {
   var item = {};
 
-  for (var i in tags) {
-    var param = Param.normalizeName(tags[i]);
+  tags.forEach(function(tag) {
+    var param = Param.normalizeName(tag);
     item[param] = null;
-  }
+  });
 
   return item;
 }
@@ -187,7 +186,7 @@ function XmlStreamParser () {
   parser.saxStream.on('closetag', function(tagName) {
     parser.handleCloseTag(tagName);
   });
-};
+}
 util.inherits(XmlStreamParser, stream.Writable);
 
 /**
@@ -237,7 +236,7 @@ XmlStreamParser.prototype.handleOpenTag = function(node) {
     }
     this.currentTag = node.name;
   }
-}
+};
 
 /**
  * Handles text.
@@ -261,9 +260,9 @@ XmlStreamParser.prototype.handleText = function(text) {
 
   // Fill with normalized parameter & data
   var param = Param.normalizeName(this.currentTag);
-  var value = Param.normalizeData(param, [text]);
-  this.data[dataType][param] = value;
-}
+
+  this.data[dataType][param] = Param.normalizeData(param, [text]);
+};
 
 /**
  * Handles tag closing.
@@ -296,16 +295,16 @@ XmlStreamParser.prototype.handleCloseTag = function(tagName) {
       this.data.server = null;
       break;
   }
-}
+};
 
 /**
  * Handle input data.
  *
- * @param chunk
- * @param encoding
+ * @param {Buffer|string} chunk
+ * @param {string} encoding
  * @param {function} done
  */
 XmlStreamParser.prototype._write = function (chunk, encoding, done) {
   this.saxStream.write(chunk);
   done();
-}
+};
