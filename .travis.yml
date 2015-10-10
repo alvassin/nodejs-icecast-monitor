@@ -2,5 +2,13 @@ language: node_js
 node_js:
   - 0.12
 branches:
-  only: 
+  only:
     - master
+    - develop
+script: npm run coverage
+addons:
+  code_climate:
+    repo_token:
+      secure: XR6KHiUf/0UIgrOGAzkRCPA90HnAsH7QnyZzyHfav4hxNQGXQHAs1rAwyUE+b0dVN9JQ+DsynVzvdSABgVf4Emi/H8pF4Z1eOIBqqwA/lBxo9I5mM0jdHytoAD9az2s+UmMw5NhSgHOd4jnMHfHM5YeCByN490hHhHK9bqe2c1BqZadPoMJ78rA8I4y/56R+QRc4GFHVCtWycQjLvsRbyGzDfE0V2DvMPtkHz8mN8biDXjKHhzahZ5U71bznkfuYT7lArZ1aMEW8KRjj3KWESjrwYRUSOkBZRamMjX5Bh+oA/AX8PZXjW1PP77kbSe+Vstj5wB7HBgNAk928kggKsVlzw4Dso+GnTaL7nCdSyygMrVwW6eZNNKe0C78CeVHQLGErHSELEMFDWkiT/m+afAnROmXxDcLdUDLKyN3C0bEIDCRujw6YEw+SgvSAFhJQP7GBZxJj01INaFeLAgW+1XHPxNYdVTFFqGs7Wo5gTdlls2M/eUaTptI9lN5qbuQswZfh0zXOO87hY3J+u5J8Pi6AwKbDmGZl89ZolFG809g27+a7O5RBXriSOx3Sczb1PS0tbMrRF/dQfkaMWH8jxhVoKwwsNtNctaUf+O8UBwLwgTo0eSFz2oibqnKE+DDpgNMx5NcJ43u3ksbxmsXbKyBNRVVy/uNyGJtH8vUwevE=
+after_success:
+  - codeclimate-test-reporter < ./coverage/lcov.info
